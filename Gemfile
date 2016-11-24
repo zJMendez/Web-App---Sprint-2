@@ -68,6 +68,10 @@ gem 'devise-bootstrap-views'
 
 gem 'rails_admin'
 
+# Attachments Support
+
+gem 'paperclip'
+
 
 
 

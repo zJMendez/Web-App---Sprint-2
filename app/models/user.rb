@@ -1,57 +1,42 @@
-class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
-         
-  has_one :profile
-  
-  enum role: [:user, :operator, :chef, :admin]
+class User < ActiveRecord::Base
 
-  after_initialize :set_default_role
+ # Include default devise modules. Others available are:
 
+ # :confirmable, :lockable, :timeoutable and :omniauthable
 
-  def set_default_role
+ devise :database_authenticatable, :registerable,         
 
-  self.role ||= :user
+ :recoverable, :rememberable, :trackable, :validatable   
 
-  end
-  
+ has_one :profile   
 
-  def default_profile
+ enum role: [:user, :operator, :chef, :admin]   
 
-      if self.profile.nil?
+ after_initialize :set_default_role
 
-        profile = Profile.new
+ after_create :set_default_profile   
 
-        profile.user = self
+ def set_default_role   
 
-        profile.save
+   self.role ||= :user
 
-        self.save      
+ end      
 
-      end
+ def set_default_profile   
 
-    self.profile       
-         
-  end      
+   profile = Profile.new   
+
+   profile.user = self   
+
+   profile.save
+
+ end
 
 
-  def friendly_name
+ def friendly_name   
 
-     if self.default_profile.first_name.nil?
+   self.profile.first_name.nil? ? self.email : self.profile.full_name
 
-        self.email
+ end  
 
-      else
-
-        self.profile.full_name
-
-      end
-
-  end
-
-
-         
-         
 end
